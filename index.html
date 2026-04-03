@@ -5,6 +5,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manas Kale | Web Developer</title>
+    <link rel="icon" type="image/png" href="/blazeimg.png" />
+    <script>
+      (function() {
+        const img = new Image();
+        img.src = '/blazeimg.png';
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          canvas.width = 64; canvas.height = 64;
+          const ctx = canvas.getContext('2d');
+          const r = 40; // Corner radius (0 to 50 for circle)
+          ctx.beginPath();
+          ctx.moveTo(r, 0); ctx.arcTo(64, 0, 64, 64, r); ctx.arcTo(64, 64, 0, 64, r); ctx.arcTo(0, 64, 0, 0, r); ctx.arcTo(0, 0, 64, 0, r);
+          ctx.closePath(); ctx.clip();
+          ctx.drawImage(img, 0, 0, 64, 64);
+          document.querySelector("link[rel='icon']").href = canvas.toDataURL('image/png');
+        };
+      })();
+    </script>
     <meta name="description" content="A minimalist, developer-focused portfolio featuring work experience, projects, open-source contributions, and blog posts with a clean aesthetic.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
