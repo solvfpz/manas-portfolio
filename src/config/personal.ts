@@ -1,7 +1,7 @@
 export const PERSONAL = {
   name: "Manas Kale",
   title: "19 • Engineer • Developer",
-  location: "Pune, India",
+  location: "Nagpur, India",
   email: "manasvk2707@gmail.com",
   github: "https://github.com/solvfpz",
   linkedin: "https://www.linkedin.com/in/manas-k-42816533b/",

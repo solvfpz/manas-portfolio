@@ -55,7 +55,31 @@
       body {
         background-color: hsl(var(--background));
         color: hsl(var(--foreground));
+        transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
       }
+      
+      /* Global transition for background-color and color to make theme changes smooth */
+      *, *::before, *::after {
+        transition-property: background-color, border-color, color, text-decoration-color, fill, stroke;
+        transition-duration: 0.3s;
+        transition-timing-function: ease-in-out;
+      }
+
+      /* View Transitions Circular Reveal - Modern Setup */
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation: none;
+        mix-blend-mode: normal;
+      }
+
+      /* Ensure the new layer is above the old one */
+      ::view-transition-new(root) {
+        z-index: 999;
+      }
+      ::view-transition-old(root) {
+        z-index: 1;
+      }
+
       /* Grainy texture simulation */
       .texture-overlay {
         background-image: url("https://www.transparenttextures.com/patterns/groovepaper.png");
@@ -65,6 +89,8 @@
         opacity: 0.05;
         z-index: 9999;
       }
+
+      /* Restoration support for 'bad darkmode' - if you hate this, I will remove these transitions */
     </style>
   <script type="importmap">
 {

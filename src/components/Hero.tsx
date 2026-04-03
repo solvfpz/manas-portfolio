@@ -56,11 +56,45 @@ const Hero: React.FC = () => {
           </div>
           <div className="flex-1 space-y-2 text-left pt-0 sm:pt-16 -mt-4 sm:mt-0">
             <div className="flex flex-col items-start gap-1.5">
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold sm:text-5xl tracking-tight">{PERSONAL.name}</h1>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" className="h-6 w-6" alt="Verified" />
+              <div className="flex items-center gap-2 group/name select-none cursor-default">
+                {/* 
+                  Interactive Name Title
+                  Fixed text rendering by ensuring each letter is strictly bound to text-foreground 
+                */}
+                <h1 className="text-2xl font-bold sm:text-5xl tracking-tight text-foreground inline-flex flex-wrap items-center gap-2">
+                  <span className="flex">
+                    {PERSONAL.name.split("").map((char, index) => (
+                      <motion.span
+                        key={index}
+                        whileHover={{ 
+                          y: -8, 
+                          scale: 1.1,
+                          rotate: (index % 2 === 0 ? 5 : -5),
+                          color: "hsl(var(--primary))",
+                        }}
+                        transition={{ 
+                          type: "spring", 
+                          stiffness: 400, 
+                          damping: 10,
+                        }}
+                        className="inline-block text-foreground"
+                        style={{ color: "var(--foreground)" }}
+                      >
+                        {char === " " ? "\u00A0" : char}
+                      </motion.span>
+                    ))}
+                  </span>
+                  
+                  <motion.img 
+                    src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" 
+                    className="h-4 w-4 sm:h-6 sm:w-6 object-contain inline-block" 
+                    alt="Verified" 
+                    whileHover={{ scale: 1.2, rotate: 360 }}
+                    transition={{ duration: 0.8, ease: "anticipate" }}
+                  />
+                </h1>
               </div>
-                <p className="text-muted-foreground font-mono text-sm">{PERSONAL.title}</p>
+              <p className="text-muted-foreground font-mono text-sm">{PERSONAL.title}</p>
             </div>
 
             <div className="flex items-center gap-x-4 text-muted-foreground pt-1">

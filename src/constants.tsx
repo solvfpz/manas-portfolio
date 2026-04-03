@@ -3,6 +3,20 @@ import React from 'react';
 import { Project, Experience, Contribution, BlogPost, Skill } from './types';
 
 export const PROJECTS: Project[] = [
+    {
+    title: "Galaxy Mart",
+    description:"A full-stack E-Commerce platform with secure authentication, real-time stock management, and admin dashboard. Includes crypto payment integration, order tracking, and modern UI.",
+    tags: [
+    "JavaScript",
+    "React",
+    "Next.js",
+    "MongoDB",
+    "Node.js",
+    "Crypto Payments"
+  ],
+  github: "https://github.com/solvfpz/galaxymart-saas",
+  image: "/image4.png"
+},
   {
     title: "Real Time Attendance System",
     description: "Full-stack app with secure auth, live updates, and admin dashboard.",
@@ -29,7 +43,6 @@ export const EXPERIENCES: Experience[] = [
     description: [
       "Built full-stack web applications from scratch, handling frontend, backend, and deployment.",
       "Developed real-time systems including attendance tracking and automation bots.",
-      "Worked with modern stacks like Next.js, Firebase, Node.js, and REST APIs.",
       "Focused on clean UI, scalable logic, and real-world usability."
     ]
   },
@@ -69,15 +82,14 @@ export const BLOGS: BlogPost[] = [
 ];
 
 export const SKILLS: Skill[] = [
-  { name: "TypeScript", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" },
   { name: "JavaScript", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" },
+  { name: "TypeScript", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" },
   { name: "React/Next.js", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original.svg" },
   { name: "Node.js", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original.svg" },
   { name: "Express", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/express/express-original.svg" },
   { name: "Python", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" },
   { name: "Firebase", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/firebase/firebase-plain.svg" },
   { name: "MongoDB", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/mongodb/mongodb-original.svg" },
-  { name: "AWS", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" },
   { name: "Tailwind CSS", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/tailwindcss/tailwindcss-original.svg" },
   { name: "Git", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/git/git-original.svg" },
   { name: "GitHub", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original.svg" }

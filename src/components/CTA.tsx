@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Plus, ArrowRight } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 const CTA: React.FC = () => {
   return (

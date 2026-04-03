@@ -17,11 +17,49 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = (event: React.MouseEvent<HTMLButtonElement>) => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(nextTheme);
-    localStorage.setItem('theme', nextTheme);
-    document.documentElement.classList.toggle('dark', nextTheme === 'dark');
+    
+    // Fallback if the browser doesn't support the View Transitions API
+    if (!document.startViewTransition) {
+      setTheme(nextTheme);
+      localStorage.setItem('theme', nextTheme);
+      document.documentElement.classList.toggle('dark', nextTheme === 'dark');
+      return;
+    }
+
+    // Get the exact click coordinates to start the circle reveal
+    const x = event.clientX;
+    const y = event.clientY;
+    
+    // Calculate the radius needed to reach the farthest corner of the screen
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    const transition = document.startViewTransition(() => {
+      setTheme(nextTheme);
+      localStorage.setItem('theme', nextTheme);
+      document.documentElement.classList.toggle('dark', nextTheme === 'dark');
+    });
+
+    // Animate the 'Circular Reveal' from the click point
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 500,
+          easing: 'ease-out',
+          pseudoElement: '::view-transition-new(root)',
+        }
+      );
+    });
   };
 
   return (
