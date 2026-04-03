@@ -1,13 +1,12 @@
 {
-    "version": 2,
-    "installCommand": "cd portfolio1 && npm install",
-    "buildCommand": "cd portfolio1 && npm run build",
-    "outputDirectory": "portfolio1/dist",
-    "framework": "vite",
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/index.html"
-        }
-    ]
+  "version": 2,
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
