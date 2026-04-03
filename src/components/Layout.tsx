@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Sun, Moon, Github, Linkedin, Mail, ExternalLink, ArrowRight, ChevronRight, GitMerge, GitPullRequest, Plus } from 'lucide-react';
+import { Sun, Moon, Github, Linkedin, Mail, ArrowRight, ChevronRight, GitMerge, GitPullRequest, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PERSONAL } from '../config/personal';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [time, setTime] = useState(new Date());
+  const [visitorCount, setVisitorCount] = useState<string>('----');
   const location = useLocation();
 
   useEffect(() => {
@@ -15,12 +17,42 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       setTheme(savedTheme);
       document.documentElement.classList.toggle('dark', savedTheme === 'dark');
     }
+    
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    // Fetch REAL-TIME Visitor count from a reliable high-uptime API (CounterAPI Dev)
+    const fetchVisitorCount = async () => {
+      try {
+        const response = await fetch('https://api.counterapi.dev/v1/manas_kale_portfolio/visits/up');
+        const data = await response.json();
+        if (data.count) {
+          setVisitorCount(data.count.toString().padStart(4, '0'));
+        }
+      } catch (err) {
+        // Subtle fallback if internet is out
+        setVisitorCount('0001');
+      }
+    };
+
+    fetchVisitorCount();
+
+    return () => clearInterval(timer);
   }, []);
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'Asia/Kolkata'
+    });
+  };
 
   const toggleTheme = (event: React.MouseEvent<HTMLButtonElement>) => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
     
-    // Fallback if the browser doesn't support the View Transitions API
     if (!document.startViewTransition) {
       setTheme(nextTheme);
       localStorage.setItem('theme', nextTheme);
@@ -28,11 +60,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       return;
     }
 
-    // Get the exact click coordinates to start the circle reveal
     const x = event.clientX;
     const y = event.clientY;
-    
-    // Calculate the radius needed to reach the farthest corner of the screen
     const endRadius = Math.hypot(
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y)
@@ -44,7 +73,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       document.documentElement.classList.toggle('dark', nextTheme === 'dark');
     });
 
-    // Animate the 'Circular Reveal' from the click point
     transition.ready.then(() => {
       document.documentElement.animate(
         {
@@ -104,7 +132,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <p className="opacity-70">© 2026. All rights reserved.</p>
             </div>
             <div className="flex flex-col gap-1 items-center sm:items-end text-center sm:text-right">
-              <p className="font-mono tabular-nums opacity-70"><span className="font-semibold text-foreground"></span></p>
+              <p className="font-mono tabular-nums">
+                Visitor #{visitorCount} | <span className="text-foreground font-semibold ">{formatTime(time)}</span>
+              </p>
               <p className="font-mono tabular-nums">{PERSONAL.location}</p>
             </div>
           </div>

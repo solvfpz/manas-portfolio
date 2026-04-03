@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail } from 'lucide-react';
 import profilePic from './image1.jpeg';
@@ -13,7 +13,8 @@ const Hero: React.FC = () => {
       transition={{ duration: 0.5 }}
       className="space-y-8"
     >
-      <div className="flex justify-center w-full mb-8 select-none relative z-10 py-4">
+      {/* Decorative Kanji Section (Cleaned up Clock) */}
+      <div className="flex flex-col items-center justify-center w-full mb-8 select-none relative z-10 py-4 gap-y-4">
         <div className="relative group cursor-help inline-flex flex-col items-center">
           <span className="text-muted-foreground/10 text-center font-serif italic text-7xl sm:text-8xl md:text-9xl font-bold whitespace-nowrap transition-opacity group-hover:opacity-100 duration-300">
             改善
