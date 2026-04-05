@@ -20,11 +20,11 @@ const ProjectGrid: React.FC<{ limit?: number }> = ({ limit }) => {
                 <h3 className="font-semibold text-lg tracking-tight">{project.title}</h3>
                 <div className="flex gap-2">
                   {project.link && (
-                    <a href={project.link} target="_blank" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground border px-2 py-1 rounded-md bg-background/50 transition-colors">
+                    <a href={project.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground border px-2 py-1 rounded-md bg-background/50 transition-colors">
                       <ExternalLink className="size-3" /> Live
                     </a>
                   )}
-                  <a href={project.github} target="_blank" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground border px-2 py-1 rounded-md bg-background/50 transition-colors">
+                  <a href={project.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground border px-2 py-1 rounded-md bg-background/50 transition-colors">
                     <Github className="size-3" /> GitHub
                   </a>
                 </div>
