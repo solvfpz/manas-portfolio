@@ -16,7 +16,15 @@ export const PROJECTS: Project[] = [
   ],
   github: "https://github.com/solvfpz/galaxymart-saas",
   image: "/image4.png"
-},
+  },
+  {
+  title: "QR Vault",
+  description: "Instant UPI & crypto QR generator. Scan, pay, done.",
+  tags: ["React", "Vite", "TailwindCSS", "UPI", "Crypto", "QR API", "Fintech"],
+  link: "https://upi2qr-kappa.vercel.app/",
+  github: "https://github.com/solvfpz/upi2qr",
+  image: "/upi2qr-logo.png"
+  },
   {
     title: "Real Time Attendance System",
     description: "Full-stack app with secure auth, live updates, and admin dashboard.",
