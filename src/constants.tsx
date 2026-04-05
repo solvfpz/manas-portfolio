@@ -45,7 +45,7 @@ export const EXPERIENCES: Experience[] = [
   {
     company: "Independent Projects",
     role: "Full Stack Developer",
-    period: "2024 - Present",
+    period: "2025 - Present",
     logo: "M",
     isRemote: true,
     description: [
