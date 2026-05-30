@@ -1,9 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail } from 'lucide-react';
 import profilePic from './image1.jpeg';
 import { PERSONAL } from '../config/personal';
+import DiscordPresence from './DiscordPresence';
 
 const Hero: React.FC = () => {
   return (
@@ -45,64 +46,64 @@ const Hero: React.FC = () => {
       </div>
 
       <div className="mx-auto w-full max-w-3xl">
-        <div className="flex flex-row items-center justify-start gap-4 sm:gap-8">
-          <div className="relative shrink-0 -mt-16 sm:mt-0">
-            <div className="relative flex shrink-0 overflow-hidden rounded-full h-24 w-24 sm:h-40 sm:w-40 ring-2 ring-border ring-offset-2 ring-offset-background">
-              <img
-                src={profilePic}
-                alt={PERSONAL.name}
-                className="aspect-square h-full w-full object-cover"
-              />
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-8 flex-wrap">
+          {/* Left: Profile */}
+          <div className="flex flex-row items-center justify-start gap-4 sm:gap-8 flex-1 min-w-0">
+            <div className="relative shrink-0 -mt-16 sm:mt-0">
+              <div className="relative flex shrink-0 overflow-hidden rounded-full h-24 w-24 sm:h-40 sm:w-40 ring-2 ring-border ring-offset-2 ring-offset-background">
+                <img
+                  src={profilePic}
+                  alt={PERSONAL.name}
+                  className="aspect-square h-full w-full object-cover"
+                />
+              </div>
+            </div>
+            <div className="flex-1 space-y-2 text-left min-w-0">
+              <div className="flex flex-col items-start gap-1.5">
+                <div className="flex items-center gap-2 group/name select-none cursor-default">
+                  {/* 
+                    Interactive Name Title
+                    Fixed text rendering by ensuring each letter is strictly bound to text-foreground 
+                  */}
+                  <h1 className="text-2xl font-bold sm:text-5xl tracking-tight text-foreground inline-flex flex-wrap items-center gap-2">
+                    <span className="flex">
+                      {PERSONAL.name.split("").map((char, index) => (
+                        <motion.span
+                          key={index}
+                          whileHover={{ 
+                            y: -8, 
+                            scale: 1.1,
+                            rotate: (index % 2 === 0 ? 5 : -5),
+                            color: "hsl(var(--primary))",
+                          }}
+                          transition={{ 
+                            type: "spring", 
+                            stiffness: 400, 
+                            damping: 10,
+                          }}
+                          className="inline-block text-foreground"
+                          style={{ color: "var(--foreground)" }}
+                        >
+                          {char === " " ? "\u00A0" : char}
+                        </motion.span>
+                      ))}
+                    </span>
+                  </h1>
+                </div>
+                <p className="text-muted-foreground font-mono text-sm">{PERSONAL.title}</p>
+              </div>
+
+              <div className="flex items-center gap-x-4 text-muted-foreground pt-1">
+                <a href={`mailto:${PERSONAL.email}`} className="hover:text-foreground transition-colors"><Mail className="size-5" /></a>
+                <a href={PERSONAL.github} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors"><Github className="size-5" /></a>
+                <a href={PERSONAL.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors"><Linkedin className="size-5" /></a>
+              </div>
             </div>
           </div>
-          <div className="flex-1 space-y-2 text-left pt-0 sm:pt-16 -mt-4 sm:mt-0">
-            <div className="flex flex-col items-start gap-1.5">
-              <div className="flex items-center gap-2 group/name select-none cursor-default">
-                {/* 
-                  Interactive Name Title
-                  Fixed text rendering by ensuring each letter is strictly bound to text-foreground 
-                */}
-                <h1 className="text-2xl font-bold sm:text-5xl tracking-tight text-foreground inline-flex flex-wrap items-center gap-2">
-                  <span className="flex">
-                    {PERSONAL.name.split("").map((char, index) => (
-                      <motion.span
-                        key={index}
-                        whileHover={{ 
-                          y: -8, 
-                          scale: 1.1,
-                          rotate: (index % 2 === 0 ? 5 : -5),
-                          color: "hsl(var(--primary))",
-                        }}
-                        transition={{ 
-                          type: "spring", 
-                          stiffness: 400, 
-                          damping: 10,
-                        }}
-                        className="inline-block text-foreground"
-                        style={{ color: "var(--foreground)" }}
-                      >
-                        {char === " " ? "\u00A0" : char}
-                      </motion.span>
-                    ))}
-                  </span>
-                  
-                  <motion.img 
-                    src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" 
-                    className="h-4 w-4 sm:h-6 sm:w-6 object-contain inline-block" 
-                    alt="Verified" 
-                    whileHover={{ scale: 1.2, rotate: 360 }}
-                    transition={{ duration: 0.8, ease: "anticipate" }}
-                  />
-                </h1>
-              </div>
-              <p className="text-muted-foreground font-mono text-sm">{PERSONAL.title}</p>
-            </div>
 
-            <div className="flex items-center gap-x-4 text-muted-foreground pt-1">
-              <a href={`mailto:${PERSONAL.email}`} className="hover:text-foreground transition-colors"><Mail className="size-5" /></a>
-              <a href={PERSONAL.github} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors"><Github className="size-5" /></a>
-              <a href={PERSONAL.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors"><Linkedin className="size-5" /></a>
-            </div>
+          {/* Right: Discord Presence */}
+          <div className="shrink-0">
+            <DiscordPresence />
           </div>
         </div>
       </div>
