@@ -115,21 +115,21 @@ function getActivitySmallImageUrl(activity: Activity): string | null {
 
 const DesktopIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
-    style={{ color: '#555', marginLeft: '4px', verticalAlign: 'middle' }}>
+    style={{ color: 'var(--dc-icon-color)', marginLeft: '4px', verticalAlign: 'middle' }}>
     <path d="M4 2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v12h16V4H4zm6 14v2H8v2h8v-2h-2v-2H10z"/>
   </svg>
 );
 
 const MobileIcon = () => (
   <svg width="12" height="14" viewBox="0 0 24 24" fill="currentColor"
-    style={{ color: '#555', marginLeft: '4px', verticalAlign: 'middle' }}>
+    style={{ color: 'var(--dc-icon-color)', marginLeft: '4px', verticalAlign: 'middle' }}>
     <path d="M17 1H7a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm-5 20a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5-4H7V4h10v13z"/>
   </svg>
 );
 
 const WebIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
-    style={{ color: '#555', marginLeft: '4px', verticalAlign: 'middle' }}>
+    style={{ color: 'var(--dc-icon-color)', marginLeft: '4px', verticalAlign: 'middle' }}>
     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
   </svg>
 );
@@ -141,7 +141,7 @@ const SkeletonBlock: React.FC<{ width?: string; height?: string; borderRadius?: 
 }) => (
   <div style={{
     width, height, borderRadius,
-    background: 'linear-gradient(90deg, #1a1a1a 25%, #252525 50%, #1a1a1a 75%)',
+    background: 'linear-gradient(90deg, var(--dc-skeleton-bg) 25%, var(--dc-skeleton-shine) 50%, var(--dc-skeleton-bg) 75%)',
     backgroundSize: '200% 100%',
     animation: 'shimmer 1.5s infinite',
     ...style,
@@ -159,7 +159,7 @@ const LoadingSkeleton: React.FC = () => (
       </div>
     </div>
     <div style={{
-      background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: '10px', padding: '10px',
+      background: 'var(--dc-inner-bg)', border: '1px solid var(--dc-peek-border)', borderRadius: '10px', padding: '10px',
       display: 'flex', gap: '10px', alignItems: 'center',
     }}>
       <SkeletonBlock width="44px" height="44px" borderRadius="8px" style={{ flexShrink: 0 }} />
@@ -182,9 +182,14 @@ export default function DiscordPresence() {
   const [animating, setAnimating] = useState(false);
   const [hovered, setHovered] = useState(false);
 
+  const [spotifyProgress, setSpotifyProgress] = useState(0);
+  const [spotifyElapsed, setSpotifyElapsed] = useState('0:00');
+  const [spotifyRemaining, setSpotifyRemaining] = useState('0:00');
+
   const wsRef = useRef<WebSocket | null>(null);
   const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ── useEffect #1: WebSocket + REST fallback ───────────────────────────────
   const connect = useCallback(() => {
@@ -251,6 +256,40 @@ export default function DiscordPresence() {
     return () => { if (elapsedRef.current) clearInterval(elapsedRef.current); };
   }, [data?.activities]);
 
+  // ── useEffect #3: Spotify progress ticker ──────────────────────────────
+  useEffect(() => {
+    if (progressRef.current) clearInterval(progressRef.current);
+
+    if (!data?.spotify?.timestamps) {
+      setSpotifyProgress(0);
+      setSpotifyElapsed('0:00');
+      setSpotifyRemaining('0:00');
+      return;
+    }
+
+    const tick = () => {
+      const { start, end } = data.spotify.timestamps;
+      const total = end - start;
+      const now = Date.now();
+      const elapsed = now - start;
+      const pct = Math.min((elapsed / total) * 100, 100);
+
+      const em = Math.floor(elapsed / 60000);
+      const es = String(Math.floor((elapsed % 60000) / 1000)).padStart(2, '0');
+      const remaining = Math.max(0, total - elapsed);
+      const rm = Math.floor(remaining / 60000);
+      const rs = String(Math.floor((remaining % 60000) / 1000)).padStart(2, '0');
+
+      setSpotifyProgress(pct);
+      setSpotifyElapsed(`${em}:${es}`);
+      setSpotifyRemaining(`${rm}:${rs}`);
+    };
+
+    tick();
+    progressRef.current = setInterval(tick, 1000);
+    return () => { if (progressRef.current) clearInterval(progressRef.current); };
+  }, [data?.spotify?.timestamps?.start, data?.spotify?.timestamps?.end]);
+
   // ── Derived values ────────────────────────────────────────────────────────
   const status = data?.discord_status ?? 'offline';
   const statusColor = STATUS_COLORS[status];
@@ -308,8 +347,8 @@ export default function DiscordPresence() {
 
   const cardStyle: React.CSSProperties = {
     width: '280px',
-    background: '#0d0d0d',
-    border: '1px solid #1e1e1e',
+    background: 'var(--dc-bg)',
+    border: '1px solid var(--dc-border)',
     borderRadius: '16px',
     fontFamily: '"Inter", sans-serif',
     position: 'relative',
@@ -321,6 +360,50 @@ export default function DiscordPresence() {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap');
+
+        :root {
+          --dc-bg: #fafafa;
+          --dc-border: #e5e5e5;
+          --dc-inner-bg: #f0f0f0;
+          --dc-inner-border: #d4d4d4;
+          --dc-text: #1a1a1a;
+          --dc-text-secondary: #3a3a3a;
+          --dc-text-muted: #888;
+          --dc-text-faint: #999;
+          --dc-label: #999;
+          --dc-peek-bg: #eaeaea;
+          --dc-peek-border: #d4d4d4;
+          --dc-skeleton-bg: #e0e0e0;
+          --dc-skeleton-shine: #d0d0d0;
+          --dc-avatar-fallback-bg: #e0e0e0;
+          --dc-icon-color: #999;
+          --dc-custom-status: #999;
+          --dc-no-activity: #999;
+          --dc-emoji-fallback-bg: #e0e0e0;
+          --dc-emoji-fallback-text: #999;
+        }
+
+        .dark {
+          --dc-bg: #0d0d0d;
+          --dc-border: #1e1e1e;
+          --dc-inner-bg: #0a0a0a;
+          --dc-inner-border: #2a2a2a;
+          --dc-text: #ffffff;
+          --dc-text-secondary: #e0e0e0;
+          --dc-text-muted: #666;
+          --dc-text-faint: #555;
+          --dc-label: #4a4a4a;
+          --dc-peek-bg: #0e0e0e;
+          --dc-peek-border: #1a1a1a;
+          --dc-skeleton-bg: #1a1a1a;
+          --dc-skeleton-shine: #252525;
+          --dc-avatar-fallback-bg: #1e1e1e;
+          --dc-icon-color: #555;
+          --dc-custom-status: #666;
+          --dc-no-activity: #444;
+          --dc-emoji-fallback-bg: #1a1a1a;
+          --dc-emoji-fallback-text: #555;
+        }
 
         @keyframes shimmer {
           0%   { background-position: 200% 0; }
@@ -376,8 +459,8 @@ export default function DiscordPresence() {
                   {imgError || !avatarUrl ? (
                     <div style={{
                       width: '46px', height: '46px', borderRadius: '50%',
-                      background: '#1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '16px', fontWeight: 700, color: '#888',
+                      background: 'var(--dc-avatar-fallback-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '16px', fontWeight: 700, color: 'var(--dc-text-muted)',
                       filter: isOffline ? 'grayscale(0.5)' : 'none',
                       transition: 'filter 0.5s ease',
                     }}>
@@ -401,7 +484,7 @@ export default function DiscordPresence() {
                     position: 'absolute', bottom: '1px', right: '1px',
                     width: '11px', height: '11px', borderRadius: '50%',
                     background: statusColor,
-                    border: '2px solid #0d0d0d',
+                    border: '2px solid var(--dc-bg)',
                     boxShadow: statusGlow,
                     transition: 'background 0.5s ease, box-shadow 0.5s ease',
                   }} />
@@ -411,7 +494,7 @@ export default function DiscordPresence() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }} className="discord-truncate">
                     <span style={{
-                      color: '#ffffff', fontSize: '15px', fontWeight: 600,
+                      color: 'var(--dc-text)', fontSize: '15px', fontWeight: 600,
                       lineHeight: 1.2, letterSpacing: '-0.01em',
                     }}>
                       {displayName}
@@ -420,7 +503,7 @@ export default function DiscordPresence() {
                     {platform === 'mobile' && <MobileIcon />}
                     {platform === 'web' && <WebIcon />}
                   </div>
-                  <div style={{ color: '#555', fontSize: '12px', fontWeight: 400, letterSpacing: '0' }} className="discord-truncate">
+                  <div style={{ color: 'var(--dc-text-faint)', fontSize: '12px', fontWeight: 400, letterSpacing: '0' }} className="discord-truncate">
                     @{username}
                   </div>
                   <div style={{
@@ -434,7 +517,7 @@ export default function DiscordPresence() {
                   {/* Custom status */}
                   {customStatus && (
                     <div style={{
-                      color: '#666', fontSize: '11px', marginTop: '4px',
+                      color: 'var(--dc-custom-status)', fontSize: '11px', marginTop: '4px',
                       display: 'flex', alignItems: 'center', gap: '4px',
                       fontWeight: 400, letterSpacing: '0',
                     }} className="discord-truncate">
@@ -459,7 +542,7 @@ export default function DiscordPresence() {
               {items.length === 0 && (
                 <div style={{
                   fontSize: '12px',
-                  color: '#444',
+                  color: 'var(--dc-no-activity)',
                   fontStyle: 'normal',
                   fontWeight: '400',
                   letterSpacing: '0.02em',
@@ -475,7 +558,7 @@ export default function DiscordPresence() {
                 <div>
                   {/* Section label */}
                   <div style={{
-                    color: '#4a4a4a', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase',
+                    color: 'var(--dc-label)', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase',
                     letterSpacing: '0.06em', marginBottom: '5px',
                   }}>
                     {currentItem.type === 'game' ? 'PLAYING' :
@@ -504,8 +587,8 @@ export default function DiscordPresence() {
                         left: '8px',
                         right: '8px',
                         height: '100%',
-                        background: '#0e0e0e',
-                        border: '1px solid #1a1a1a',
+                        background: 'var(--dc-peek-bg)',
+                        border: '1px solid var(--dc-peek-border)',
                         borderRadius: '10px',
                         zIndex: 0,
                         opacity: 0.6,
@@ -516,13 +599,13 @@ export default function DiscordPresence() {
                     <div style={{
                       position: 'relative',
                       zIndex: 2,
-                      background: '#0a0a0a',
-                      border: '1px solid #2a2a2a',
+                      background: 'var(--dc-inner-bg)',
+                      border: '1px solid var(--dc-inner-border)',
                       borderRadius: '10px',
                       padding: '8px',
                       display: 'flex',
                       gap: '10px',
-                      alignItems: 'flex-start',
+                      alignItems: 'center',
                       opacity: animating ? 0 : 1,
                       transform: animating
                         ? 'scale(0.97)'
@@ -553,7 +636,7 @@ export default function DiscordPresence() {
                                     style={{
                                       position: 'absolute', bottom: '-4px', right: '-4px',
                                       width: '16px', height: '16px', borderRadius: '50%',
-                                      border: '2px solid #0a0a0a', objectFit: 'cover',
+                                      border: '2px solid var(--dc-inner-bg)', objectFit: 'cover',
                                     }}
                                   />
                                 )}
@@ -561,7 +644,7 @@ export default function DiscordPresence() {
                             ) : (
                               <div style={{
                                 width: '38px', height: '38px', borderRadius: '8px',
-                                background: '#1a1a1a', color: '#555', flexShrink: 0,
+                                background: 'var(--dc-emoji-fallback-bg)', color: 'var(--dc-emoji-fallback-text)', flexShrink: 0,
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 fontSize: '18px',
                               }}>
@@ -570,24 +653,24 @@ export default function DiscordPresence() {
                             )}
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <div style={{
-                                color: '#e0e0e0', fontSize: '12px', fontWeight: 600,
+                                color: 'var(--dc-text-secondary)', fontSize: '12px', fontWeight: 600,
                                 marginBottom: '2px', lineHeight: 1.3, letterSpacing: '-0.01em',
                               }} className="discord-truncate">
                                 {act.name}
                               </div>
                               {act.details || act.name.includes('Discord') ? (
-                                <div style={{ color: '#666', fontSize: '11px', fontWeight: 400, letterSpacing: '0', lineHeight: 1.3 }} className="discord-truncate">
+                                <div style={{ color: 'var(--dc-text-muted)', fontSize: '11px', fontWeight: 400, letterSpacing: '0', lineHeight: 1.3 }} className="discord-truncate">
                                   {act.details || (act.name.includes('Discord') ? 'In Voice Channel' : '')}
                                 </div>
                               ) : null}
                               {act.state && (
-                                <div style={{ color: '#666', fontSize: '11px', fontWeight: 400, letterSpacing: '0', lineHeight: 1.3 }} className="discord-truncate">
+                                <div style={{ color: 'var(--dc-text-muted)', fontSize: '11px', fontWeight: 400, letterSpacing: '0', lineHeight: 1.3 }} className="discord-truncate">
                                   {act.state}
                                 </div>
                               )}
                               {elapsed && (
                                 <div style={{
-                                  color: '#444', fontSize: '10px', marginTop: '4px',
+                                  color: 'var(--dc-text-muted)', fontSize: '10px', marginTop: '4px',
                                   fontFamily: '"Geist Mono", monospace', fontWeight: 400,
                                 }}>
                                   {elapsed} elapsed
@@ -603,24 +686,52 @@ export default function DiscordPresence() {
                             <img
                               src={sp.album_art_url}
                               alt={sp.album}
-                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                              style={{ width: '38px', height: '38px', borderRadius: '6px', objectFit: 'cover', flexShrink: 0 }}
+                              style={{
+                                width: '38px', height: '38px', borderRadius: '6px',
+                                objectFit: 'cover', flexShrink: 0,
+                              }}
                             />
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <div style={{
-                                color: '#1db954', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase',
-                                letterSpacing: '0.08em', marginBottom: '3px',
+                                display: 'flex', justifyContent: 'space-between',
+                                alignItems: 'flex-start', marginBottom: '2px',
                               }}>
-                                ● Spotify
+                                <div style={{
+                                  fontSize: '9px', fontWeight: 600, color: '#1db954',
+                                  letterSpacing: '0.07em', textTransform: 'uppercase',
+                                }}>
+                                  ● SPOTIFY
+                                </div>
+                                <span style={{
+                                  fontFamily: '"Geist Mono", monospace',
+                                  fontSize: '10px', color: '#1db954',
+                                  lineHeight: 1, flexShrink: 0, marginLeft: '6px',
+                                }}>
+                                  {spotifyElapsed}
+                                </span>
                               </div>
                               <div style={{
-                                color: '#e0e0e0', fontSize: '12px', fontWeight: 600,
-                                marginBottom: '2px', lineHeight: 1.3,
-                              }} className="discord-truncate">
+                                fontSize: '12px', fontWeight: 600, color: 'var(--dc-text-secondary)',
+                                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                              }}>
                                 {sp.song}
                               </div>
-                              <div style={{ color: '#666', fontSize: '11px', fontWeight: 400 }} className="discord-truncate">
+                              <div style={{
+                                fontSize: '11px', color: 'var(--dc-text-muted)',
+                                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                                marginBottom: '5px',
+                              }}>
                                 {sp.artist}
+                              </div>
+                              <div style={{
+                                width: '100%', height: '2px',
+                                background: '#1e1e1e', borderRadius: '999px',
+                              }}>
+                                <div style={{
+                                  width: `${spotifyProgress}%`, height: '100%',
+                                  background: '#1db954', borderRadius: '999px',
+                                  transition: 'width 1s linear',
+                                }} />
                               </div>
                             </div>
                           </>
