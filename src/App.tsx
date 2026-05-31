@@ -10,6 +10,7 @@ import WorkExperience from './components/WorkExperience';
 import ProjectGrid from './components/ProjectGrid';
 import OSSContributions from './components/OSSContributions';
 import BlogGrid from './components/BlogGrid';
+import BlogPostPage from './components/BlogPostPage';
 import Skills from './components/Skills';
 import CTA from './components/CTA';
 
@@ -105,6 +106,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/blogs" element={<BlogsPage />} />
+          <Route path="/blogs/:slug" element={<BlogPostPage />} />
         </Routes>
       </Layout>
     </Router>

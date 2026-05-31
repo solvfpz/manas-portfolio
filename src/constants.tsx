@@ -75,18 +75,18 @@ export const CONTRIBUTIONS: Contribution[] = [
 ];
 
 export const BLOGS: BlogPost[] = [
-  {
-    title: "Horizontal Scaling in Databases: Part 1 — Read Replicas",
-    summary: "As applications grow, databases often become the bottleneck. Learn how read replicas helps serve data efficiently.",
-    publishedAt: "2025-12-26",
-    slug: "read-replicas"
-  },
-  {
-    title: "How to convert any Medium blog to Markdown in seconds",
-    summary: "Convert your Medium articles into clean, editable Markdown format quickly with mdify—no copy-pasting required.",
-    publishedAt: "2025-11-14",
-    slug: "mdify"
-  }
+{
+  title: "AI Won't Replace Developers — It Replaced My Google Searches",
+  summary: "Everyone's panicking about AI taking dev jobs. I build with AI daily, and here's what's actually happening.",
+  publishedAt: "2026-05-31",
+  slug: "ai-wont-replace-developers"
+},
+{
+  title: "Building with AI — How I Actually Use It in My Workflow",
+  summary: "Not a tutorial. Just how I actually build stuff day to day as a 19-year-old developer who ships real projects.",
+  publishedAt: "2026-05-31",
+  slug: "building-with-ai"
+}
 ];
 
 export const SKILLS: Skill[] = [
@@ -94,7 +94,6 @@ export const SKILLS: Skill[] = [
   { name: "TypeScript", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" },
   { name: "React/Next.js", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original.svg" },
   { name: "Node.js", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original.svg" },
-  { name: "Express", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/express/express-original.svg" },
   { name: "Python", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" },
   { name: "Firebase", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/firebase/firebase-plain.svg" },
   { name: "MongoDB", icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/mongodb/mongodb-original.svg" },
