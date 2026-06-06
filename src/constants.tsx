@@ -14,6 +14,7 @@ export const PROJECTS: Project[] = [
     "Node.js",
     "Crypto Payments"
   ],
+  link: "https://galaxymart.store/",
   github: "https://github.com/solvfpz/galaxymart-saas",
   image: "/image4.png"
   },
