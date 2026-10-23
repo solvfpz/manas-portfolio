@@ -14,9 +14,9 @@ export const PROJECTS: Project[] = [
     "Node.js",
     "Crypto Payments"
   ],
-  link: "https://galaxymart.store/",
+  link: "https://galaxymart-saas-or0k5vi4c-solvfpzs-projects.vercel.app/",
   github: "https://github.com/solvfpz/galaxymart-saas",
-  image: "/image4.png"
+  image: "/galaxymart.jpg"
   },
   {
   title: "QR Vault",
