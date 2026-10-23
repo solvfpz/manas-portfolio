@@ -19,9 +19,17 @@ const WorkExperience: React.FC = () => {
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full pr-2 gap-1 text-left">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted font-bold text-xs shrink-0 border border-border">
-                    {exp.logo}
-                  </div>
+                  {exp.logo.startsWith('/') || exp.logo.startsWith('http') ? (
+                    <img
+                      src={exp.logo}
+                      alt={`${exp.company} logo`}
+                      className="h-8 w-8 shrink-0 rounded-md object-cover border border-border"
+                    />
+                  ) : (
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted font-bold text-xs shrink-0 border border-border">
+                      {exp.logo}
+                    </div>
+                  )}
                   <div className="flex items-center gap-x-1.5">
                     <span className="font-semibold text-base">{exp.company}</span>
                     <span className="text-muted-foreground text-xs font-mono hidden sm:inline">/</span>
@@ -52,12 +60,27 @@ const WorkExperience: React.FC = () => {
                       {exp.isIntern && (
                         <span className="bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-50 text-[10px] px-2 py-0.5 rounded-md font-semibold">Intern</span>
                       )}
+                      {exp.isFreelance && (
+                        <span className="bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-50 text-[10px] px-2 py-0.5 rounded-md font-semibold">Freelance</span>
+                      )}
                     </div>
                     <ul className="list-disc space-y-1.5 text-sm text-muted-foreground">
                       {exp.description.map((item, i) => (
                         <li key={i} className="leading-relaxed">{item}</li>
                       ))}
                     </ul>
+                    {exp.stack && exp.stack.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {exp.stack.map((tech) => (
+                          <span
+                            key={tech}
+                            className="rounded-md border border-border bg-muted/40 px-2 py-0.5 text-[10px] font-mono text-muted-foreground"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )}

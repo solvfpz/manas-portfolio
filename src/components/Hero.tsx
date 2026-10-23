@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail } from 'lucide-react';
 import profilePic from './image1.jpeg';
 import { PERSONAL } from '../config/personal';
-import DiscordPresence from './DiscordPresence';
 
 const Hero: React.FC = () => {
   return (
@@ -99,11 +98,6 @@ const Hero: React.FC = () => {
                 <a href={PERSONAL.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors"><Linkedin className="size-5" /></a>
               </div>
             </div>
-          </div>
-
-          {/* Right: Discord Presence */}
-          <div className="shrink-0">
-            <DiscordPresence />
           </div>
         </div>
       </div>

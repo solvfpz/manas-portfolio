@@ -44,13 +44,28 @@ export const PROJECTS: Project[] = [
 
 export const EXPERIENCES: Experience[] = [
   {
+    company: "Jiifit",
+    role: "Software Development Intern",
+    period: "Oct 2026 - Present",
+    logo: "/jiifit-logo.svg",
+    isRemote: true,
+    isIntern: true,
+    description: [
+      "Building and maintaining REST APIs with Node.js and Express for Jiifit's fitness platform.",
+      "Working with Supabase (PostgreSQL) to store user profiles and health-check data.",
+      "Fixing backend and login issues, and working remotely with the team on new features."
+    ],
+    stack: ["Node.js", "Express.js", "Supabase", "PostgreSQL", "Git"]
+  },
+  {
     company: "Independent Projects",
     role: "Full Stack Developer",
-    period: "2025 - Present",
+    period: "2025 - 2026",
     logo: "M",
     isRemote: true,
+    isFreelance: true,
     description: [
-      "Built full-stack web applications from scratch, handling frontend, backend, and deployment.",
+      "Delivered freelance full-stack web applications end to end, handling frontend, backend, and deployment.",
       "Developed real-time systems including attendance tracking and automation bots.",
       "Focused on clean UI, scalable logic, and real-world usability."
     ]

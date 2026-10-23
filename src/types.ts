@@ -14,8 +14,10 @@ export interface Experience {
   period: string;
   description: string[];
   logo: string;
+  stack?: string[];
   isIntern?: boolean;
   isRemote?: boolean;
+  isFreelance?: boolean;
 }
 
 export interface Contribution {

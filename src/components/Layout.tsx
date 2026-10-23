@@ -1,14 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Sun, Moon, Github, Linkedin, Mail, ArrowRight, ChevronRight, GitMerge, GitPullRequest, Plus } from 'lucide-react';
+import { Sun, Moon, Github, Linkedin, Mail, ArrowRight, ChevronRight, GitMerge, GitPullRequest, Plus, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PERSONAL } from '../config/personal';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [time, setTime] = useState(new Date());
-  const [visitorCount, setVisitorCount] = useState<string>('----');
+  const [showToTop, setShowToTop] = useState(false);
+  const [progress, setProgress] = useState(0);
   const location = useLocation();
 
   useEffect(() => {
@@ -22,24 +23,31 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       setTime(new Date());
     }, 1000);
 
-    // Fetch REAL-TIME Visitor count from a reliable high-uptime API (CounterAPI Dev)
-    const fetchVisitorCount = async () => {
-      try {
-        const response = await fetch('https://api.counterapi.dev/v1/manas_kale_portfolio/visits/up');
-        const data = await response.json();
-        if (data.count) {
-          setVisitorCount(data.count.toString().padStart(4, '0'));
-        }
-      } catch (err) {
-        // Subtle fallback if internet is out
-        setVisitorCount('0001');
-      }
-    };
-
-    fetchVisitorCount();
-
     return () => clearInterval(timer);
   }, []);
+
+  // Track scroll position: reveals the "back to top" control and drives the nav progress line.
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setShowToTop(y > 320);
+      setProgress(max > 0 ? Math.min(1, y / max) : 0);
+    };
+
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
@@ -104,19 +112,48 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <Link to="/projects" className={`text-sm font-medium transition-colors hover:text-foreground ${location.pathname === '/projects' ? 'text-foreground' : 'text-muted-foreground'}`}>Projects</Link>
             <Link to="/blogs" className={`text-sm font-medium transition-colors hover:text-foreground ${location.pathname === '/blogs' ? 'text-foreground' : 'text-muted-foreground'}`}>Blog</Link>
           </div>
-          <button onClick={toggleTheme} className="p-2 rounded-md hover:bg-accent transition-colors relative w-9 h-9 flex items-center justify-center overflow-hidden">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={theme}
-                initial={{ y: -20, opacity: 0, rotate: -90 }}
-                animate={{ y: 0, opacity: 1, rotate: 0 }}
-                exit={{ y: 20, opacity: 0, rotate: 90 }}
-                transition={{ duration: 0.2 }}
-              >
-                {theme === 'light' ? <Moon className="size-5" /> : <Sun className="size-5" />}
-              </motion.div>
+
+          <div className="flex items-center gap-1">
+            <AnimatePresence initial={false}>
+              {showToTop && (
+                <motion.button
+                  key="to-top"
+                  type="button"
+                  onClick={scrollToTop}
+                  aria-label="Back to top"
+                  title="Back to top"
+                  initial={{ opacity: 0, y: -6, scale: 0.92 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.92 }}
+                  transition={{ duration: 0.18, ease: 'easeOut' }}
+                  className="group flex h-9 w-9 items-center justify-center rounded-md text-foreground/45 transition-colors hover:bg-accent hover:text-foreground focus-visible:bg-accent focus-visible:text-foreground focus-visible:outline-none"
+                >
+                  <ArrowUp className="size-5 transition-transform duration-200 group-hover:-translate-y-0.5" />
+                </motion.button>
+              )}
             </AnimatePresence>
-          </button>
+
+            <button onClick={toggleTheme} className="p-2 rounded-md hover:bg-accent transition-colors relative w-9 h-9 flex items-center justify-center overflow-hidden">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={theme}
+                  initial={{ y: -20, opacity: 0, rotate: -90 }}
+                  animate={{ y: 0, opacity: 1, rotate: 0 }}
+                  exit={{ y: 20, opacity: 0, rotate: 90 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {theme === 'light' ? <Moon className="size-5" /> : <Sun className="size-5" />}
+                </motion.div>
+              </AnimatePresence>
+            </button>
+          </div>
+
+          {/* Reading progress line, pinned to the nav's bottom border */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left bg-foreground/45"
+            style={{ transform: `scaleX(${progress})` }}
+          />
         </nav>
 
         {/* Main Content */}
@@ -126,14 +163,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
         {/* Footer */}
         <footer className="py-8 text-xs text-muted-foreground border-t border-border mt-12">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between sm:gap-4">
             <div className="flex flex-col gap-1 items-center sm:items-start text-center sm:text-left">
               <p>Designed & Developed by <span className="font-semibold text-foreground">{PERSONAL.name}</span></p>
               <p className="opacity-70">© 2026. All rights reserved.</p>
             </div>
+
             <div className="flex flex-col gap-1 items-center sm:items-end text-center sm:text-right">
               <p className="font-mono tabular-nums">
-                Visitor #{visitorCount} | <span className="text-foreground font-semibold ">{formatTime(time)}</span>
+                <span className="text-foreground font-semibold">{formatTime(time)}</span> IST
               </p>
               <p className="font-mono tabular-nums">{PERSONAL.location}</p>
             </div>
