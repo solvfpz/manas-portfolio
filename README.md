@@ -1,1 +1,1 @@
-[manas](https://www.manashh.in/) - portfolio
+[manas](https://www.manashh.in/) - my bullshit portfolio
